@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-import Order from '../types/Order'
+import { PartialOrder } from '../types/Order'
 
 const boxSx = {
     borderRadius: '12px',
@@ -12,7 +12,7 @@ const boxSx = {
 }
 
 interface Props {
-    value: Order | null
+    value: PartialOrder | null
 }
 
 export default function Display({ value }: Props) {

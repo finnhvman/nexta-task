@@ -1,11 +1,18 @@
-import {ChangeEvent, useCallback} from 'react'
-import Box from '@mui/material/Box'
+import {ChangeEvent, SyntheticEvent, useCallback} from 'react'
+import Autocomplete from '@mui/material/Autocomplete'
+import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
-import Order from '../types/Order'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { PartialOrder } from '../types/Order'
+import { extraIds, extrasIndex } from '../types/Extras'
+
+function getLabelOfExtra(extra: string) {
+    return extrasIndex[extra].label
+}
 
 interface Props {
-    value: Order | null
-    onChange: (order: Order) => void
+    value: PartialOrder | null
+    onChange: (order: PartialOrder) => void
 }
 
 export default function Editor({ value, onChange }: Props) {
@@ -16,14 +23,44 @@ export default function Editor({ value, onChange }: Props) {
         })
     }, [ value, onChange ])
 
+    const setDate = useCallback((date: Date | null) => {
+        onChange({
+            ...value,
+            date
+        })
+    }, [ value, onChange ])
+
+    const setExtras = useCallback((event: SyntheticEvent, extras: string[]) => {
+        onChange({
+            ...value,
+            extras
+        })
+    }, [ value, onChange ])
+
     return (
-        <Box width="360px">
+        <Stack width="360px" spacing="24px">
             <TextField
                 label="Customer Name"
                 value={value?.customerName ?? ''}
                 onChange={setCustomerName}
                 fullWidth
             />
-        </Box>
+
+            <DatePicker
+                label="Date"
+                value={value?.date ?? null}
+                onChange={setDate}
+                renderInput={(params) => <TextField {...params} />}
+            />
+
+            <Autocomplete
+                multiple
+                options={extraIds}
+                getOptionLabel={getLabelOfExtra}
+                value={value?.extras ?? []}
+                onChange={setExtras}
+                renderInput={(params) => <TextField {...params} label="Extras" />}
+            />
+        </Stack>
     )
 }
