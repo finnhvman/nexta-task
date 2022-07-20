@@ -1,6 +1,6 @@
 type Order = {
     customerName: string
-    date: Date | null
+    date: Date
     extras: string[]
 }
 

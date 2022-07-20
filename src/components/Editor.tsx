@@ -1,39 +1,42 @@
-import {ChangeEvent, SyntheticEvent, useCallback} from 'react'
+import {ChangeEvent, Dispatch, SyntheticEvent, useCallback} from 'react'
 import Autocomplete from '@mui/material/Autocomplete'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import Order, { PartialOrder } from '../types/Order'
+import { PartialOrder } from '../types/Order'
 import { extraIds, extrasIndex } from '../types/Extras'
+import { Actions} from '../reducers/orderReducer'
 
-function getLabelOfExtra(extra: string) {
-    return extrasIndex[extra].label
+function getLabelOfExtra(extraId: string) {
+    return extrasIndex[extraId].label
 }
 
 interface Props {
     value: PartialOrder | null
-    onChange: (order: PartialOrder) => void
+    dispatch: Dispatch<Actions>
 }
 
-export default function Editor({ value, onChange }: Props) {
-    const setField = useCallback(<K extends keyof Order, V extends Order[K]>(field: K, v: V) => {
-        onChange({
-            ...value,
-            [field]: v
-        })
-    }, [ value, onChange ])
-
+export default function Editor({ value, dispatch }: Props) {
     const setCustomerName = useCallback((event: ChangeEvent<HTMLInputElement>) => {
-        setField('customerName', event.target.value)
-    }, [ setField ])
+        dispatch({
+            type: 'setCustomerName',
+            customerName: event.target.value
+        })
+    }, [ dispatch ])
 
     const setDate = useCallback((date: Date | null) => {
-        setField('date', date)
-    }, [ setField ])
+        dispatch({
+            type: 'setDate',
+            date: date ?? new Date()
+        })
+    }, [ dispatch ])
 
     const setExtras = useCallback((event: SyntheticEvent, extras: string[]) => {
-        setField('extras', extras)
-    }, [ setField ])
+        dispatch({
+            type: 'setExtras',
+            extras
+        })
+    }, [ dispatch ])
 
     return (
         <Stack width="360px" spacing="24px">
