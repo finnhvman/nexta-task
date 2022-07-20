@@ -3,7 +3,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import Stack from '@mui/material/Stack'
 import TextField from '@mui/material/TextField'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
-import { PartialOrder } from '../types/Order'
+import Order, { PartialOrder } from '../types/Order'
 import { extraIds, extrasIndex } from '../types/Extras'
 
 function getLabelOfExtra(extra: string) {
@@ -16,26 +16,24 @@ interface Props {
 }
 
 export default function Editor({ value, onChange }: Props) {
-    const setCustomerName = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const setField = useCallback(<K extends keyof Order, V extends Order[K]>(field: K, v: V) => {
         onChange({
             ...value,
-            customerName: event.target.value
+            [field]: v
         })
     }, [ value, onChange ])
+
+    const setCustomerName = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+        setField('customerName', event.target.value)
+    }, [ setField ])
 
     const setDate = useCallback((date: Date | null) => {
-        onChange({
-            ...value,
-            date
-        })
-    }, [ value, onChange ])
+        setField('date', date)
+    }, [ setField ])
 
     const setExtras = useCallback((event: SyntheticEvent, extras: string[]) => {
-        onChange({
-            ...value,
-            extras
-        })
-    }, [ value, onChange ])
+        setField('extras', extras)
+    }, [ setField ])
 
     return (
         <Stack width="360px" spacing="24px">
